@@ -1,32 +1,62 @@
+import { Avatar, Button, Checkbox, FormControlLabel, Grid, Paper } from "@mui/material";
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import TextField from '@mui/material/TextField';
-import { Avatar, Button, Checkbox, FormControlLabel, Grid, Paper } from "@mui/material";
-import React from "react";
+import UsersAPI from '../../Services/UsersAPI';
+import { Typography } from '@mui/material'
+import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+
+const paperStyle = {
+    padding: 20,
+    height: '70vh',
+    width: 300,
+    margin: '20px auto'
+}
+
+const avatarStyle = {
+    backgroundColor: '#4fbf8a'
+}
+
+const inputStyle = {
+    marginTop: '1.5rem'
+}
+
+const inputCheckStyle = {
+    marginTop: '0.5rem'
+}
+
+const typographyStyle = {
+    marginBottom: '8px',
+}
+
+const buttonStyle = {
+    margin: '2rem 0',
+    backgroundColor: '#4fbf8a'
+}
 
 export default function Login() {
-    const paperStyle = {
-        padding: 20,
-        height: '70vh',
-        width: 300,
-        margin: '20px auto'
-    }
+    const [user, setUser] = useState([]);
     
-    const avatarStyle = {
-        backgroundColor: '#4fbf8a'
-    }
+    useEffect(() => {
+        async function getUsers() {
+            const response = await axios.get(UsersAPI);
 
-    const inputStyle = {
-        marginTop: '1.5rem'
-    }
+            setUser(response.data)
+        } 
 
-    const inputCheckStyle = {
-        marginTop: '0.5rem'
-    }
+        getUsers();
+    }, [user])
 
-    const buttonStyle = {
-        color: '#fff',
-        marginTop: '2rem',
-        backgroundColor: '#4fbf8a'
+    const setInput = (event) => {
+        const { name, value } = event.target;
+
+        const login = {
+            ...user,
+            [name]: value
+        }
+        
+        setUser(login)
     }
 
     return (
@@ -40,8 +70,8 @@ export default function Login() {
                     <h2>Sign in</h2>
                 </Grid>
 
-                <TextField label="Username" placeholder='Enter username' variant="outlined" fullWidth required style={inputStyle}/>
-                <TextField label="Password" placeholder='Enter password' type='password' variant="outlined" fullWidth required style={inputStyle}/>
+                <TextField onChange={(e) => setInput(e)} value={user.name} label="Name" placeholder='Enter name' variant="outlined" fullWidth required style={inputStyle} />
+                <TextField onChange={(e) => setInput(e)} value={user.last_name} label="Lastname" placeholder='Enter last name' variant="outlined" fullWidth required style={inputStyle} />
 
                 <FormControlLabel
                     control={<Checkbox name='checkedB' color='primary' />}
@@ -50,6 +80,19 @@ export default function Login() {
                 />
 
                 <Button type='submit' style={buttonStyle} fullWidth variant='contained'>Sign in</Button>
+
+                <Typography style={typographyStyle}>
+                    <Link href="#">
+                        Forgot password?
+                    </Link>
+                </Typography>
+
+                <Typography>
+                    You haven't an account?
+                    <Link to="/register">
+                        Sign up
+                    </Link>
+                </Typography>
             </Paper>
         </Grid>
     )
