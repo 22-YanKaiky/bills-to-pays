@@ -11,7 +11,7 @@ const paperStyle = {
     padding: 20,
     height: '70vh',
     width: 300,
-    margin: '20px auto'
+    margin: '75px auto'
 }
 
 const avatarStyle = {
@@ -37,13 +37,13 @@ const buttonStyle = {
 
 export default function Login() {
     const [user, setUser] = useState([]);
-    
+
     useEffect(() => {
         async function getUsers() {
             const response = await axios.get(UsersAPI);
 
             setUser(response.data)
-        } 
+        }
 
         getUsers();
     }, [user])
@@ -55,7 +55,7 @@ export default function Login() {
             ...user,
             [name]: value
         }
-        
+
         setUser(login)
     }
 
@@ -79,7 +79,14 @@ export default function Login() {
                     style={inputCheckStyle}
                 />
 
-                <Button type='submit' style={buttonStyle} fullWidth variant='contained'>Sign in</Button>
+                <Button component={Link}
+                    to="/dashboard"
+                    type='submit'
+                    style={buttonStyle}
+                    fullWidth variant='contained'
+                >
+                    Sign in
+                </Button>
 
                 <Typography style={typographyStyle}>
                     <Link href="#">
