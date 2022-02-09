@@ -46,7 +46,7 @@ export default function Register() {
 
                 <Typography>
                     You haven an account?
-                    <Link to="/">
+                    <Link to="/login">
                         Sign in
                     </Link>
                 </Typography>
