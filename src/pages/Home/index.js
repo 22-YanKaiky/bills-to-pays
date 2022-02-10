@@ -1,59 +1,125 @@
-import { Avatar, Button, Grid, Paper } from "@mui/material";
-import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
-import UsersAPI from '../../Services/UsersAPI';
-import { Link } from 'react-router-dom';
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useState } from "react";
+import Payment from '@mui/icons-material/Payment';
+import { Button, Checkbox, Grid, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Typography } from "@mui/material";
+import { makeStyles } from '@material-ui/styles';
 
-const paperStyle = {
-    padding: 20,
-    height: '70vh',
-    width: 300,
-    margin: '75px auto'
-}
+const useStyles = makeStyles({
+  paper: {
+    borderRadius: 6,
+    padding: 16
+  },
 
-const avatarStyle = {
-    backgroundColor: '#4fbf8a'
-}
-
-const buttonStyle = {
-    margin: '2rem 0',
-    backgroundColor: '#4fbf8a'
-}
+  cards: {
+    display: 'flex',
+    justifyContent: 'space-around'
+  }
+})
 
 export default function Home() {
-    const [user, setUser] = useState([]);
+  const classes = useStyles();
+  const [billsTopay, setBillsTopay] = useState([]);
+  const [checked, setChecked] = useState([]);
+  const [ligth, setLigth] = useState('');
+  const [internet, setInternet] = useState('');
+  const [creditCard, setCreditCard] = useState('');
 
-    useEffect(() => {
-        async function getUsers() {
-            const response = await axios.get(UsersAPI);
+  const bills = [
+    {
+      name: 'Dentista',
+      value: 169.73,
+    },
+    {
+      name: 'Faculdade',
+      value: 189.68,
+    },
+    {
+      name: 'Netflix',
+      value: 55.90,
+    },
+    {
+      name: 'Luz',
+      value: ligth,
+      // value: 180.00,
+    },
+    {
+      name: 'Internet',
+      value: internet,
+      // value: 130.00,
+    },
+    {
+      name: 'Cartão de Crédito',
+      value: creditCard,
+      // value: 400.00,
+    },
+  ]
 
-            setUser(response.data)
-        }
+  const handleToggle = (value) => () => {
+    const currentIndex = checked.indexOf(value);
+    const newChecked = [...checked];
 
-        getUsers();
-    }, [user])
+    if (currentIndex === -1) {
+      newChecked.push(value);
+    } else {
+      newChecked.splice(currentIndex, 1);
+    }
 
-    return (
-        <Grid>
-            <Paper elevation={10} style={paperStyle}>
-                <Grid align='center'>
-                    <Avatar style={avatarStyle}>
-                        <MonetizationOnIcon />
-                    </Avatar>
+    setChecked(newChecked);
+  };
 
-                    <h2>Home</h2>
-                </Grid>
-
-                <Button component={Link}
-                    to="/login"
-                    type='submit'
-                    style={buttonStyle}
-                    fullWidth variant='contained'
-                >
-                    Login
-                </Button>
-            </Paper>
+  return (
+    <Grid>
+      <Paper elevation={10} >
+        <Grid align='center'>
+          <h2>Bills To Pay</h2>
         </Grid>
-    )
+      </Paper>
+
+      <div className={classes.cards}>
+        <Paper className={classes.paper} elevation={5}>
+          <Grid>
+            <h2>Despesas Fixas</h2>
+          </Grid>
+
+          <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+            {bills.map((value) => {
+              const labelId = `checkbox-list-label-${value.name}`;
+
+              return (
+                <ListItem
+                  key={value.value}
+                  secondaryAction={
+                    <IconButton edge="end" aria-label="comments">
+                      <Payment />
+                    </IconButton>
+                  }
+                  disablePadding
+                >
+                  <ListItemButton role={undefined} onClick={handleToggle(value.value)} dense>
+                    <ListItemIcon>
+                      <Checkbox
+                        edge="start"
+                        checked={checked.indexOf(value.value) !== -1}
+                        tabIndex={-1}
+                        disableRipple
+                        inputProps={{ 'aria-labelledby': labelId }}
+                      />
+                    </ListItemIcon>
+                    <ListItemText id={labelId} primary={value.name} />
+                  </ListItemButton>
+                </ListItem>
+              );
+            })}
+          </List>
+        </Paper>
+
+        <Paper className={classes.paper} elevation={5}>
+          <Grid align='center'>
+            <h2>Bills To Pay</h2>
+          </Grid>
+        </Paper>
+
+        <Typography value='amount'>{`R$ ${billsTopay.value === undefined && 0}`}</Typography>
+      </div>
+    </Grid>
+  )
 }
